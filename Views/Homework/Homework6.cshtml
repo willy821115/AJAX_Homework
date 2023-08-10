@@ -1,0 +1,72 @@
+﻿
+@{
+    ViewData["Title"] = "Homework6";
+}
+
+<h1>Homework6</h1>
+
+<select id="citySelect" class="form-select" aria-label="Default select example">
+</select>
+<select id="siteSelect" class="form-select" aria-label="Default select example">
+</select>
+<select id="roadSelect" class="form-select" aria-label="Default select example">
+</select>
+<div id="divResult" class="alert alert-info"></div>
+
+@section Styles{
+}
+
+@section Scripts{
+    <script>
+        const citySelect = document.querySelector('#citySelect');
+        const siteSelect = document.querySelector('#siteSelect');
+        const roadSelect = document.querySelector('#roadSelect');
+        const divResult = document.querySelector('#divResult');
+
+        async function loadCity() {
+            const response = await fetch('@Url.Content("/api/city")')
+            const datas = await response.json()
+            const cities = datas.map(city => `<option value="${city}">${city}</option>`)
+            citySelect.innerHTML = cities.join("")
+            loadDist()
+        }
+        loadCity()
+
+        async function loadDist() {
+            const resopnse = await fetch(`@Url.Content("/api/District")?city=${citySelect.value}`)
+            const datas = await resopnse.json()
+            const districts = datas.map(district => `<option value="${district}">${district}</option>`)
+            siteSelect.innerHTML = districts.join("")
+            loadRoad()
+        }
+
+
+        async function loadRoad() {
+            const resopnse = await fetch(`@Url.Content("/api/Road")?siteId=${siteSelect.value}`)
+            const datas = await resopnse.json()
+            const roads = datas.map(roads => `<option value="${roads}">${roads}</option>`)
+            roadSelect.innerHTML = roads.join("")
+            show()
+        }
+
+
+
+
+        citySelect.addEventListener('change', () => {
+            loadDist();
+        })
+
+        siteSelect.addEventListener('change', () => {
+            loadRoad();
+        })
+        roadSelect.addEventListener('change', () => {
+            show()
+        })
+
+
+        function show() {
+            divResult.textContent = `${siteSelect.value} ${roadSelect.value}`;
+        }
+
+    </script>
+}

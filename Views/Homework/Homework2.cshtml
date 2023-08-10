@@ -1,0 +1,37 @@
+﻿
+@{
+    ViewData["Title"] = "Homework2";
+}
+
+<h1>Homework2</h1>
+
+<div class="container-fluid" id="content">
+</div>
+
+@section Scripts{
+    <script src="~/js/travel.js"></script>
+
+    <script>
+        const DataFromJS = spots.CommonFormat.Section.map(product => {
+            const { file: { img }, stitle, xbody } = product;
+            let imgUrl = img[0].text;
+            document.querySelector('#content').innerHTML += 
+            
+                `<div class="card" style="width: 18rem;">
+                    <img src="${imgUrl}" class="card-img-top"  >
+                  <div class="card-body">
+                    <h5 class="card-title">${stitle}</h5>
+                     <p class="card-text">${xbody}</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                  </div>
+                </div>
+                    `
+            
+        })
+
+      
+
+
+    </script>
+
+}

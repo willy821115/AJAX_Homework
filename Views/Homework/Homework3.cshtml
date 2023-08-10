@@ -1,0 +1,109 @@
+﻿
+@{
+    ViewData["Title"] = "Homework3";
+}
+
+<h1>Homework3</h1>
+
+<h1>Register</h1>
+
+<form name="userInfo" id="form1">
+    <div class="mb-3">
+        <label for="UserName" class="form-label">UserName</label>
+        <input type="text" class="form-control" id="UserName" placeholder="請輸入您的名字" name="Name">
+    </div>
+    <div id="divDanger" class="alert alert-danger"></div>
+    <div class="mb-3">
+        <label for="UserName" class="form-label">UserEmail</label>
+        <input type="email" class="form-control" id="UserName" placeholder="請輸入您的Email" name="Email">
+    </div>
+    <div class="mb-3">
+        <label for="UserAge" class="form-label">UserAge</label>
+        <input type="text" class="form-control" id="UserAge" placeholder="請輸入您的年紀" name="Age">
+    </div>
+    <div class="mb-3">
+        <label for="formFile" class="form-label">選擇檔案</label>
+        <input class="form-control" type="file" id="file" name="file">
+        <div id="test" class="alert alert-info"></div>
+    </div>
+    <div class="mb-3">
+        <img id="showImg" src="" width="200" />
+    </div>
+    <button id="btnConfirm" type="submit" class="btn btn-outline-dark">送出</button>
+</form>
+<div id="divResult" class="alert alert-info"></div>
+@section Styles
+    {
+    <style>
+        #divDanger {
+            display: none;
+        }
+    </style>
+}
+
+@section Scripts{
+    <script>
+        const imgFile = document.querySelector('#file')
+        imgFile.addEventListener('change', () => {
+            loadimg()
+            $('#test').html(`<p>${imgFile.value}</p>`)
+        })
+        async function loadimg() {
+            const formdata = new FormData(document.userInfo)
+            const resopnse = await fetch
+                ('@Url.Content("/ApiForHomework/getImgStream")',
+                    {
+                        body: formdata,
+                        method: "POST"
+                    })
+            const data = await resopnse.blob();
+            const showImg = document.querySelector('#showImg')
+            showImg.src = URL.createObjectURL(data)
+        }
+    </script>
+    <script>
+        const UserName = document.querySelector('#UserName')
+        const UserEmail = document.querySelector('#UserEmail')
+        const divDanger = document.querySelector('#divDanger')
+        const divResult = document.querySelector('#divResult')
+        const btnConfirm = document.getElementById('btnConfirm');
+        const xhr = new XMLHttpRequest()
+
+        UserName.addEventListener('blur', () => {
+            xhr.open('POST', '/ApiForHomework/CheckValue');
+            const formData = new FormData(document.userInfo);
+            xhr.send(formData);
+            xhr.addEventListener('load', () => {
+                const data = xhr.responseText
+                if (data === "true") {
+                    divDanger.innerText = "會員已存在"
+                    divDanger.style.display = "inline-block"
+                    btnConfirm.setAttribute('disabled', 'disabled')
+                }
+                if (data === "false" || UserName.value === "") {
+                    divDanger.innerText = ""
+                    divDanger.style.display = "none"
+                    btnConfirm.removeAttribute('disabled')
+                }
+            })
+        })
+
+
+        btnConfirm.addEventListener('click', event => {
+            event.preventDefault();
+            const formData = new FormData(document.userInfo);
+            fetch('@Url.Content("/api/register")', {
+                body: formData,
+                method: "post"
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('新增成功!')
+                        location.href = '@Url.Content("/Members/index")'
+                    } else {
+                        alert('新增失敗,請確認資料')
+                    }
+                })
+        })
+    </script>
+    }

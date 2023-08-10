@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewData["Title"] = "Homework4";
+}
+
+<h1>Homework4</h1>
+
+<select id="city" class="form-select" aria-label="Default select example">
+    @*<option selected>請選擇</option>*@
+</select>
+<div class="border alert">
+    <span id="result"></span>
+</div>
+@section Scripts
+{
+    <script>
+        const cities = ["台北市","新北市","桃園市","台中市", "台南市","高雄市"]
+        const city = document.querySelector('#city');
+        for(let i =0;i<cities.length;i++)
+        {
+            city.innerHTML += `<option value="${cities[i]}">${cities[i]}</option>`
+        }
+
+        $('#city').change(() => {
+            $('#result').html($('#city').val())
+        })
+    </script>
+}
